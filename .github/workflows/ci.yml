@@ -1,0 +1,71 @@
+name: Package CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: ${{ matrix.target }}
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-latest
+            target: linux-x86_64-gnu
+          - runner: ubuntu-24.04-arm
+            target: linux-arm64-gnu
+          - runner: macos-13
+            target: macos-x86_64
+          - runner: macos-14
+            target: macos-arm64
+    env:
+      PACKAGE_NAME: "fs"
+      RUNTIME_REPOSITORY: Aaron193/moglang
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: ${{ env.RUNTIME_REPOSITORY }}
+          path: mog
+      - name: Install macOS dependencies
+        if: runner.os == 'macOS'
+        run: brew install openssl@3
+      - name: Build Mog runtime
+        run: cmake -S mog -B mog/build -DCMAKE_BUILD_TYPE=Release && cmake --build mog/build --parallel
+      - name: Build, validate, and test package
+        shell: bash
+        run: |
+          set -euo pipefail
+          stage="$RUNNER_TEMP/github.com/moglang/$PACKAGE_NAME"
+          mkdir -p "$(dirname "$stage")"
+          rsync -a --exclude .git "$GITHUB_WORKSPACE/" "$stage/"
+          cmake -S "$stage" -B "$stage/build" -DCMAKE_BUILD_TYPE=Release
+          cmake --build "$stage/build" --parallel
+          if [[ "$RUNNER_OS" == "macOS" ]]; then
+            cp "$stage/build/package.so" "$stage/package.dylib"
+          else
+            cp "$stage/build/package.so" "$stage/package.so"
+          fi
+          "$GITHUB_WORKSPACE/mog/build/interpreter" validate-package "$stage"
+          project="$RUNNER_TEMP/package-test"
+          mkdir -p "$project"
+          cat > "$project/mog.toml" <<EOF
+          kind = "project"
+          name = "ci-$PACKAGE_NAME"
+          version = "0.0.0"
+          description = "Package CI test."
+
+          [dependencies]
+          "github.com/moglang/$PACKAGE_NAME" = { path = "$stage", version = "0.1.1" }
+          EOF
+          (
+            cd "$project"
+            MOG_CACHE_DIR="$RUNNER_TEMP/mog-cache" "$GITHUB_WORKSPACE/mog/build/interpreter" run "$stage/tests/main.mog"
+          )
+
