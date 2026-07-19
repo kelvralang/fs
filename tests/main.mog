@@ -1,0 +1,14 @@
+const fs = @import("github.com/moglang/fs")
+var directory str = ".mog-fs-test"
+var source str = directory + "/source.txt"
+var target str = directory + "/target.txt"
+fs.remove(directory)
+fs.mkdir(directory)
+if (!fs.exists(directory) || !fs.isDirectory(directory)) error("directory creation")
+fs.writeText(source, "mog")
+if (!fs.exists(source) || !fs.isFile(source) || fs.readText(source) != "mog") error("text file round trip")
+fs.rename(source, target)
+if (fs.exists(source) || fs.readText(target) != "mog") error("rename")
+if (len(fs.workingDirectory()) == 0) error("working directory")
+fs.remove(directory)
+if (fs.exists(directory)) error("recursive removal")

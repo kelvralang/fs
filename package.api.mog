@@ -1,0 +1,10 @@
+package fs
+fn readText(path str) str
+fn writeText(path str, content str) void
+fn exists(path str) bool
+fn isFile(path str) bool
+fn isDirectory(path str) bool
+fn workingDirectory() str
+fn mkdir(path str) void
+fn rename(from str, to str) void
+fn remove(path str) void

@@ -1,0 +1,17 @@
+kind = "native"
+module = "github.com/moglang/fs"
+import_name = "fs"
+namespace = "github"
+name = "fs"
+version = "0.1.1"
+license = "MIT"
+abi_version = 3
+mog_runtime = "^0.1.1"
+author = "Mog contributors"
+description = "Official Mog foundation package."
+repository = "https://github.com/moglang/fs"
+dependencies = []
+
+[native]
+build = "cmake"
+targets = ["linux-x86_64-gnu", "linux-arm64-gnu", "macos-arm64", "macos-x86_64"]
