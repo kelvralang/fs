@@ -7,4 +7,6 @@ fn isDirectory(path str) bool
 fn workingDirectory() str
 fn mkdir(path str) void
 fn rename(from str, to str) void
+fn copyFile(from str, to str, overwrite bool) void
+fn fileSize(path str) u64
 fn remove(path str) void
