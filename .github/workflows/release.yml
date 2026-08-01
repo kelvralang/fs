@@ -84,7 +84,7 @@ jobs:
           "$runtime" validate-package "$stage"
           project="$RUNNER_TEMP/package-test"
           mkdir -p "$project"
-          sed -e "s|fs|$PACKAGE_NAME|g" -e "s|__PACKAGE_VERSION__|$version|g" -e "s|__PACKAGE_PATH__|$stage|g" \
+          sed -e "s|__PACKAGE_NAME__|$PACKAGE_NAME|g" -e "s|__PACKAGE_VERSION__|$version|g" -e "s|__PACKAGE_PATH__|$stage|g" \
             "$GITHUB_WORKSPACE/.github/package-test.toml.in" > "$project/mog.toml"
           (
             cd "$project"
