@@ -1,0 +1,7 @@
+kind = "project"
+name = "ci-__PACKAGE_NAME__"
+version = "0.0.0"
+description = "Package CI test."
+
+[dependencies]
+"github.com/moglang/__PACKAGE_NAME__" = { path = "__PACKAGE_PATH__", version = "__PACKAGE_VERSION__" }
