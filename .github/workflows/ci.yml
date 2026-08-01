@@ -14,7 +14,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  validate:
+  compatibility:
     name: ${{ matrix.target }} / Mog ${{ matrix.runtime_ref }}
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 25
@@ -106,3 +106,14 @@ jobs:
             cd "$project"
             MOG_CACHE_DIR="$RUNNER_TEMP/mog-cache" "$runtime" run "$stage/tests/main.mog"
           )
+
+  validate:
+    if: always()
+    needs: compatibility
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Require compatibility matrix
+        env:
+          RESULT: ${{ needs.compatibility.result }}
+        run: test "$RESULT" = success
