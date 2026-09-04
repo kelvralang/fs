@@ -1,16 +1,16 @@
-const fs = @import("github.com/moglang/fs")
-var directory str = ".mog-fs-test"
+const fs = @import("github.com/kelvralang/fs")
+var directory str = ".kel-fs-test"
 var source str = directory + "/source.txt"
 var target str = directory + "/target.txt"
 var copy str = directory + "/copy.txt"
 fs.remove(directory)
 fs.mkdir(directory)
 if (!fs.exists(directory) || !fs.isDirectory(directory)) error("directory creation")
-fs.writeText(source, "mog filesystem")
-if (!fs.exists(source) || !fs.isFile(source) || fs.readText(source) != "mog filesystem") error("text file round trip")
-if (fs.fileSize(source) != 14u64) error("file size")
+fs.writeText(source, "kelvra filesystem")
+if (!fs.exists(source) || !fs.isFile(source) || fs.readText(source) != "kelvra filesystem") error("text file round trip")
+if (fs.fileSize(source) != 17u64) error("file size")
 fs.copyFile(source, copy, false)
-if (fs.readText(copy) != "mog filesystem") error("file copy")
+if (fs.readText(copy) != "kelvra filesystem") error("file copy")
 fs.writeText(source, "updated")
 fs.copyFile(source, copy, true)
 if (fs.readText(copy) != "updated") error("file copy overwrite")

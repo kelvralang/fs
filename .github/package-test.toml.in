@@ -4,4 +4,4 @@ version = "0.0.0"
 description = "Package CI test."
 
 [dependencies]
-"github.com/moglang/__PACKAGE_NAME__" = { path = "__PACKAGE_PATH__", version = "__PACKAGE_VERSION__" }
+"github.com/kelvralang/__PACKAGE_NAME__" = { path = "__PACKAGE_PATH__", version = "__PACKAGE_VERSION__" }

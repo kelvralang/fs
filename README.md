@@ -1,18 +1,18 @@
-# moglang/fs
+# kelvralang/fs
 
-Filesystem utilities for Mog. The canonical import is `github.com/moglang/fs`.
-This native package supports ABI 3 and Mog runtime `^0.1.4` on Linux x86_64,
+Filesystem utilities for Kelvra. The canonical import is `github.com/kelvralang/fs`.
+This native package supports ABI 3 and Kelvra runtime `^0.2.0` on Linux x86_64,
 Linux ARM64, and macOS ARM64.
 
-Install from a Mog project directory. Git dependencies build from source and
+Install from a Kelvra project directory. Git dependencies build from source and
 therefore require CMake and a C++17 compiler:
 
 ```bash
-mog add github.com/moglang/fs@v0.1.2
+kelvra add github.com/kelvralang/fs@v0.2.0
 ```
 
-```mog
-const fs = @import("github.com/moglang/fs")
+```kelvra
+const fs = @import("github.com/kelvralang/fs")
 
 fs.mkdir("output")
 fs.writeText("output/message.txt", "hello")
@@ -33,5 +33,5 @@ print(fs.fileSize("output/backup.txt"))
   accepted. Do not pass an untrusted or insufficiently scoped path.
 - Directory listing is not exposed because ABI 3 cannot return collections.
 
-Build with CMake. The complete public contract is in `package.api.mog`. The
+Build with CMake. The complete public contract is in `package.api.kel`. The
 package is licensed under GPL-3.0-only; see `LICENSE`.

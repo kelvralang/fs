@@ -15,16 +15,13 @@ concurrency:
 
 jobs:
   compatibility:
-    name: ${{ matrix.target }} / Mog ${{ matrix.runtime_ref }}
+    name: ${{ matrix.target }} / Kelvra ${{ matrix.runtime_ref }}
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 25
     strategy:
       fail-fast: false
       matrix:
         include:
-          - runner: ubuntu-latest
-            target: linux-x86_64-gnu
-            runtime_ref: v0.1.4
           - runner: ubuntu-latest
             target: linux-x86_64-gnu
             runtime_ref: main
@@ -40,9 +37,9 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
-          repository: moglang/mog
+          repository: kelvralang/kelvra
           ref: ${{ matrix.runtime_ref }}
-          path: .runtime/mog
+          path: .runtime/kelvra
       - name: Install system dependencies
         shell: bash
         run: |
@@ -57,15 +54,15 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          version="$(sed -n 's/^version = "\([^"]*\)"/\1/p' mog.toml | head -n 1)"
-          license="$(sed -n 's/^license = "\([^"]*\)"/\1/p' mog.toml | head -n 1)"
+          version="$(sed -n 's/^version = "\([^"]*\)"/\1/p' kelvra.toml | head -n 1)"
+          license="$(sed -n 's/^license = "\([^"]*\)"/\1/p' kelvra.toml | head -n 1)"
           test -n "$version"
           test -f LICENSE
-          test -f package.api.mog
-          test -f tests/main.mog
+          test -f package.api.kel
+          test -f tests/main.kel
           grep -Fq "## $version" CHANGELOG.md
-          grep -q '^```mog' README.md
-          grep -Fq '"${{ matrix.target }}"' mog.toml
+          grep -q '^```kelvra' README.md
+          grep -Fq '"${{ matrix.target }}"' kelvra.toml
           case "$license" in
             GPL-3.0-only) grep -Fq "GNU GENERAL PUBLIC LICENSE" LICENSE ;;
             MIT) grep -Fq "MIT License" LICENSE ;;
@@ -74,19 +71,19 @@ jobs:
           if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
             test "${GITHUB_REF_NAME#v}" = "$version"
           fi
-      - name: Build Mog runtime
+      - name: Build Kelvra runtime
         run: |
-          cmake -S .runtime/mog -B .runtime/mog/build -DCMAKE_BUILD_TYPE=Release
-          cmake --build .runtime/mog/build --parallel
+          cmake -S .runtime/kelvra -B .runtime/kelvra/build -DCMAKE_BUILD_TYPE=Release
+          cmake --build .runtime/kelvra/build --parallel
       - name: Build, validate, and test package
         shell: bash
         env:
           SDL_VIDEODRIVER: dummy
         run: |
           set -euo pipefail
-          runtime="$GITHUB_WORKSPACE/.runtime/mog/build/interpreter"
-          version="$(sed -n 's/^version = "\([^"]*\)"/\1/p' mog.toml | head -n 1)"
-          stage="$RUNNER_TEMP/github.com/moglang/$PACKAGE_NAME"
+          runtime="$GITHUB_WORKSPACE/.runtime/kelvra/build/kelvra"
+          version="$(sed -n 's/^version = "\([^"]*\)"/\1/p' kelvra.toml | head -n 1)"
+          stage="$RUNNER_TEMP/github.com/kelvralang/$PACKAGE_NAME"
           mkdir -p "$(dirname "$stage")"
           rsync -a --exclude .git --exclude .runtime --exclude build "$GITHUB_WORKSPACE/" "$stage/"
           cmake -S "$stage" -B "$stage/build" -DCMAKE_BUILD_TYPE=Release \
@@ -101,10 +98,10 @@ jobs:
           project="$RUNNER_TEMP/package-test"
           mkdir -p "$project"
           sed -e "s|__PACKAGE_NAME__|$PACKAGE_NAME|g" -e "s|__PACKAGE_VERSION__|$version|g" -e "s|__PACKAGE_PATH__|$stage|g" \
-            "$GITHUB_WORKSPACE/.github/package-test.toml.in" > "$project/mog.toml"
+            "$GITHUB_WORKSPACE/.github/package-test.toml.in" > "$project/kelvra.toml"
           (
             cd "$project"
-            MOG_CACHE_DIR="$RUNNER_TEMP/mog-cache" "$runtime" run "$stage/tests/main.mog"
+            KELVRA_CACHE_DIR="$RUNNER_TEMP/kelvra-cache" "$runtime" run "$stage/tests/main.kel"
           )
 
   validate:
