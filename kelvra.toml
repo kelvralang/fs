@@ -1,15 +1,15 @@
 kind = "native"
-module = "github.com/moglang/fs"
+module = "github.com/kelvralang/fs"
 import_name = "fs"
 namespace = "github"
 name = "fs"
-version = "0.1.2"
+version = "0.2.0"
 license = "GPL-3.0-only"
 abi_version = 3
-mog_runtime = "^0.1.4"
-author = "Mog contributors"
-description = "Official Mog foundation package."
-repository = "https://github.com/moglang/fs"
+kelvra_runtime = "^0.2.0"
+author = "Kelvra contributors"
+description = "Official Kelvra foundation package."
+repository = "https://github.com/kelvralang/fs"
 dependencies = []
 
 [native]
